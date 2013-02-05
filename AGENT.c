@@ -16,13 +16,13 @@ void checkSupplies()
 	int matches = atoi(matchesStr);
 
 	if (paper <= 0) {
-		printf("NO PAPER!\n");
+		printf("NO PAPER!\n\n");
 		exit(0);
 	} else if (tobacco <= 0) {
-		printf("NO TOBACCO!\n");
+		printf("NO TOBACCO!\n\n");
 		exit(0);
 	} else if (matches <= 0) {
-		printf("NO MATCHES!\n");
+		printf("NO MATCHES!\n\n");
 		exit(0);
 	}
 }
@@ -59,19 +59,22 @@ void initializeSuplies()
 void consume()
 {
 	char *paperStr = getenv("PAPER");
-	int paper = atoi(paperStr);
-	paper++;
-	setenv("PAPER", paper, 1);
+	int paper = atoi(paperStr) - 1;
+	char paperBuffer[10];
+	snprintf(paperBuffer, 10, "%d", paper);
+	setenv("PAPER", paperBuffer, 1);
 
 	char *tobaccoStr = getenv("TOBACCO");
-	int tobacco = atoi(tobaccoStr);
-	tobacco++;
-	setenv("TOBACCO", tobacco, 1);
+	int tobacco = atoi(tobaccoStr) - 1;
+	char tobaccoBuffer[10];
+	snprintf(tobaccoBuffer, 10, "%d", tobacco);
+	setenv("TOBACCO", tobaccoBuffer, 1);
 
 	char *matchesStr = getenv("MATCHES");
-	int matches = atoi(matchesStr);
-	matches++;
-	setenv("MATCHES", matches, 1);
+	int matches = atoi(matchesStr) - 1;
+	char matchesBuffer[10];
+	snprintf(matchesBuffer, 10, "%d", matches);
+	setenv("MATCHES", matchesBuffer, 1);
 }
 
 void wait()
@@ -83,7 +86,7 @@ void smoke()
 {
 	checkSupplies();
 	listAvaliable();
-	printf("SMOKING!\n");
+	printf("SMOKING!\n\n");
 }
 
 void forkSmokers()
@@ -133,8 +136,8 @@ int main()
 	printInfo();
 
 	forkSmokers();
-
-	printf("AGENT IS DONE!");
+	wait();
+	printf("AGENT IS DONE!\n");
 	exit(0);
 	return 0;
 }
