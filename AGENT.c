@@ -5,23 +5,43 @@
 void forkSmokers()
 {
 	printf("FORKING THREE SMOKERS!\n");
-	pid_t pid = fork();
-	if (pid == 0) {
-		//forked
-		printf("SMOKER S1:%d\n", gitpid());
+	pid_t S1 = fork();
+	if (S1 == 0) {
+		//forked properly
+		printf("SMOKER S1:%d\n", getpid());
 		smoke();
-	} else (pid < 0) {
-		//failed
+		exit();
+	} else (S1 < 0) {
+		//failed to fork
 	} else {
 		//agent
-		//dec 1 from each, because consumed by s1.
-		//fork s2 here
-		//repeat
+		wait();
+		consume();
+
+		pid_t S2 = fork();
+		if (S2 == 0) {
+			printf("SMOKER S2:%D\n", getpid());
+			smoke();
+			exit();
+		} else (S2 < 0) {
+			//failed to fork
+		} else {
+			//agent
+			wait();
+			consume();
+
+			pid_t S3 = fork();
+			if (S3 == 0) {
+				printf("SMOKER S3:%d\n", getpid());
+				smoke();
+				exit();
+			} else (S3 < 0) {
+				//failed to fork
+			} else {
+				exit();
+			}
+		}
 	}
-	fork();
-	printf("SMOKER S2:%d\n", gitpid());
-	fork();
-	printf("SMOKER S3:%d\n", gitpid());
 }
 
 void smoke()
@@ -33,13 +53,22 @@ void smoke()
 
 void checkSupplies()
 {
-	if (getenv("PAPER") == 0) {
+	char * paperStr = getenv("PAPER");
+	int paper = atoi(paperStr);
+
+	char * tobaccoStr = getenv("TOBACCO");
+	int tobacco = atoi(tobaccoStr);
+
+	char * matchesStr = getenv("MATCHES");
+	int matches = atoi(matchesStr);
+
+	if (paper <= 0) {
 		printf("NO PAPER!\n");
 		exit();
-	} else (getenv("TOBACCO") == 0) {
+	} else (tobacco <= 0) {
 		printf("NO TOBACCO!\n");
 		exit();
-	} else (getenv("MATCHES") == 0) {
+	} else (matches <= 0) {
 		printf("NO MATCHES!\n");
 		exit();
 	}
@@ -47,9 +76,9 @@ void checkSupplies()
 
 void listAvaliable()
 {
-	printf("PAPER IS AVAILABLE! P:%d\n", getenv("PAPER"));
-	printf("TOBACCO IS AVAILABLE! T:%d\n", getenv("TOBACCO"));
-	printf("MATCHES ARE AVAILABLE! M:%d\n", getenv("MATCHES"));
+	printf("PAPER IS AVAILABLE! P:%s\n", getenv("PAPER"));
+	printf("TOBACCO IS AVAILABLE! T:%s\n", getenv("TOBACCO"));
+	printf("MATCHES ARE AVAILABLE! M:%s\n", getenv("MATCHES"));
 }
 
 void printInfo()
@@ -63,11 +92,7 @@ void printInfo()
 	time(&now);
 	printf("TIME:%s\n", ctime(&now));
 
-	int PAPER = getenv("PAPER");
-	int TOBACCO = getenv("TOBACCO");
-	int MATCHES = getenv("MATCHES");
-
-	printf("PAPER:%d, TOBACCO:%d, MATCHES:%d\n", PAPER, TOBACCO, MATCHES);
+	printf("PAPER:%s, TOBACCO:%s, MATCHES:%s\n", getenv("PAPER"), getenv("TOBACCO"), getenv("MATCHES"));
 }
 
 void initializeSuplies()
@@ -77,11 +102,18 @@ void initializeSuplies()
 	putenv("MATCHES=2");
 }
 
+void wait()
+{
+	sleep(5);
+}
+
 void main()
 {
 	initializeSuplies();
 
 	printInfo();
+
+	forkSmokers();
 
 	printf("AGENT IS DONE!");
 	exit();
