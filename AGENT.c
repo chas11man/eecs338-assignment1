@@ -5,15 +5,22 @@
 main()
 {
 	initializeSuplies();
-	
-	printInfo();
 
-	printf("PAPER:%d, TOBACCO:%d, MATCHES:%d\n", PAPER, TOBACCO, MATCHES);
-	printf("FORKING THREE SMOKERS!\n");
-	fork()
+	printInfo();
 
 	printf("AGENT IS DONE!");
 	exit();
+}
+
+forkSmokers()
+{
+	printf("FORKING THREE SMOKERS!\n");
+	fork();
+	printf("SMOKER S1:%d\n", gitpid());
+	fork();
+	printf("SMOKER S2:%d\n", gitpid());
+	fork();
+	printf("SMOKER S3:%d\n", gitpid());
 }
 
 printInfo()
@@ -30,6 +37,8 @@ printInfo()
 	int PAPER = getenv("PAPER");
 	int TOBACCO = getenv("TOBACCO");
 	int MATCHES = getenv("MATCHES");
+
+	printf("PAPER:%d, TOBACCO:%d, MATCHES:%d\n", PAPER, TOBACCO, MATCHES);
 }
 
 initializeSuplies()
