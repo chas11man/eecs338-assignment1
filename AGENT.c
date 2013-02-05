@@ -17,12 +17,15 @@ void checkSupplies()
 
 	if (paper <= 0) {
 		printf("NO PAPER!\n\n");
+		fflush(stdout);
 		exit(0);
 	} else if (tobacco <= 0) {
 		printf("NO TOBACCO!\n\n");
+		fflush(stdout);
 		exit(0);
 	} else if (matches <= 0) {
 		printf("NO MATCHES!\n\n");
+		fflush(stdout);
 		exit(0);
 	}
 }
@@ -37,8 +40,9 @@ void listAvaliable()
 void printInfo()
 {
 	printf("AGENT INFO:\n");
-	char* hostName[255];
-	printf("HOSTNAME:%d\n", gethostname(&hostName, 255));
+	char hostName[256];
+	gethostname(hostName, sizeof(hostName));
+	printf("HOSTNAME:%s\n", hostName);
 	printf("PID:%d\n", getpid());
 	printf("UID:%d\n", getuid());
 
@@ -91,12 +95,13 @@ void smoke()
 
 void forkSmokers()
 {
-	printf("FORKING THREE SMOKERS!\n");
+	printf("FORKING THREE SMOKERS!\n\n");
 	pid_t S1 = fork();
 	if (S1 == 0) {
 		//forked properly
 		printf("SMOKER S1:%d\n", getpid());
 		smoke();
+		fflush(stdout);
 		exit(0);
 	} else if (S1 < 0) {
 		//failed to fork
@@ -109,6 +114,7 @@ void forkSmokers()
 		if (S2 == 0) {
 			printf("SMOKER S2:%d\n", getpid());
 			smoke();
+			fflush(stdout);
 			exit(0);
 		} else if (S2 < 0) {
 			//failed to fork
@@ -121,6 +127,7 @@ void forkSmokers()
 			if (S3 == 0) {
 				printf("SMOKER S3:%d\n", getpid());
 				smoke();
+				fflush(stdout);
 				exit(0);
 			} else if (S3 < 0) {
 				//failed to fork
@@ -138,6 +145,7 @@ int main()
 	forkSmokers();
 	wait();
 	printf("AGENT IS DONE!\n");
+	fflush(stdout);
 	exit(0);
 	return 0;
 }

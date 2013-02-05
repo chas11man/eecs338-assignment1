@@ -1,6 +1,10 @@
 CC=gcc
-CFLAGS=-std=c99 -g -Wall -O
-default: AGENT.o
-	$(CC) $(CFLAGS) AGENT.o
+FLAGS=-std=c99 -g -Wall
+OUT=AGENT
+SRC=AGENT.c
+
+$(OUT): $(SRC)
+	$(CC) $(FLAGS) -o $@ $?
+
 clean:
-	rm -f AGENT AGENT.o
+	@rm -f $(OUT)
