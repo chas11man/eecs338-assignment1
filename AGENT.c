@@ -53,11 +53,19 @@ void printInfo()
 	printf("PAPER:%s, TOBACCO:%s, MATCHES:%s\n", getenv("PAPER"), getenv("TOBACCO"), getenv("MATCHES"));
 }
 
-void initializeSuplies()
+void initializeSuplies(int paper, int tobacco, int matches)
 {
-	setenv("PAPER", "2", 1);
-	setenv("TOBACCO", "2", 1);
-	setenv("MATCHES", "2", 1);
+	char paperBuffer[10];
+	snprintf(paperBuffer, 10, "%d", paper);
+	setenv("PAPER", paperBuffer, 1);
+
+	char tobaccoBuffer[10];
+	snprintf(tobaccoBuffer, 10, "%d", tobacco);
+	setenv("TOBACCO", tobaccoBuffer, 1);
+
+	char matchesBuffer[10];
+	snprintf(matchesBuffer, 10, "%d", matches);
+	setenv("MATCHES", matchesBuffer, 1);
 }
 
 void consume()
@@ -83,7 +91,7 @@ void consume()
 
 void wait()
 {
-	sleep(5);
+	sleep(2);
 }
 
 void smoke()
@@ -136,16 +144,31 @@ void forkSmokers()
 	}
 }
 
-int main()
+void smokeScenario(int paper, int tobacco, int matches)
 {
-	initializeSuplies();
-
+	initializeSuplies(paper, tobacco, matches);
 	printInfo();
-
 	forkSmokers();
 	wait();
-	printf("AGENT IS DONE!\n");
+	printf("AGENT IS DONE!\n-----\n");
+}
+
+int main()
+{
+	printf("Scenario 1\n");
+	smokeScenario(2, 2, 2);
+
+	printf("Scenario 2\n");
+	smokeScenario(1, 1, 1);
+
+	printf("Scenario 3\n");
+	smokeScenario(2, 2, 1);
+
+	printf("Scenario 4\n");
+	smokeScenario(2, 1, 0);
+
 	fflush(stdout);
 	exit(0);
+
 	return 0;
 }
