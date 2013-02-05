@@ -1,55 +1,8 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-void forkSmokers()
-{
-	printf("FORKING THREE SMOKERS!\n");
-	pid_t S1 = fork();
-	if (S1 == 0) {
-		//forked properly
-		printf("SMOKER S1:%d\n", getpid());
-		smoke();
-		exit();
-	} else (S1 < 0) {
-		//failed to fork
-	} else {
-		//agent
-		wait();
-		consume();
-
-		pid_t S2 = fork();
-		if (S2 == 0) {
-			printf("SMOKER S2:%D\n", getpid());
-			smoke();
-			exit();
-		} else (S2 < 0) {
-			//failed to fork
-		} else {
-			//agent
-			wait();
-			consume();
-
-			pid_t S3 = fork();
-			if (S3 == 0) {
-				printf("SMOKER S3:%d\n", getpid());
-				smoke();
-				exit();
-			} else (S3 < 0) {
-				//failed to fork
-			} else {
-				exit();
-			}
-		}
-	}
-}
-
-void smoke()
-{
-	checkSupplies();
-	listAvaliable();
-	printf("SMOKING!\n");
-}
+#include <unistd.h>
+#include <sys/types.h>
 
 void checkSupplies()
 {
@@ -64,13 +17,13 @@ void checkSupplies()
 
 	if (paper <= 0) {
 		printf("NO PAPER!\n");
-		exit();
-	} else (tobacco <= 0) {
+		exit(0);
+	} else if (tobacco <= 0) {
 		printf("NO TOBACCO!\n");
-		exit();
-	} else (matches <= 0) {
+		exit(0);
+	} else if (matches <= 0) {
 		printf("NO MATCHES!\n");
-		exit();
+		exit(0);
 	}
 }
 
@@ -84,7 +37,8 @@ void listAvaliable()
 void printInfo()
 {
 	printf("AGENT INFO:\n");
-	printf("HOSTNAME:%d\n", gethostname());
+	char* hostName[255];
+	printf("HOSTNAME:%d\n", gethostname(&hostName, 255));
 	printf("PID:%d\n", getpid());
 	printf("UID:%d\n", getuid());
 
@@ -97,9 +51,27 @@ void printInfo()
 
 void initializeSuplies()
 {
-	putenv("PAPER=2");
-	putenv("TOBACCO=2");
-	putenv("MATCHES=2");
+	setenv("PAPER", "2", 1);
+	setenv("TOBACCO", "2", 1);
+	setenv("MATCHES", "2", 1);
+}
+
+void consume()
+{
+	char *paperStr = getenv("PAPER");
+	int paper = atoi(paperStr);
+	paper++;
+	setenv("PAPER", paper, 1);
+
+	char *tobaccoStr = getenv("TOBACCO");
+	int tobacco = atoi(tobaccoStr);
+	tobacco++;
+	setenv("TOBACCO", tobacco, 1);
+
+	char *matchesStr = getenv("MATCHES");
+	int matches = atoi(matchesStr);
+	matches++;
+	setenv("MATCHES", matches, 1);
 }
 
 void wait()
@@ -107,7 +79,54 @@ void wait()
 	sleep(5);
 }
 
-void main()
+void smoke()
+{
+	checkSupplies();
+	listAvaliable();
+	printf("SMOKING!\n");
+}
+
+void forkSmokers()
+{
+	printf("FORKING THREE SMOKERS!\n");
+	pid_t S1 = fork();
+	if (S1 == 0) {
+		//forked properly
+		printf("SMOKER S1:%d\n", getpid());
+		smoke();
+		exit(0);
+	} else if (S1 < 0) {
+		//failed to fork
+	} else {
+		//agent
+		wait();
+		consume();
+
+		pid_t S2 = fork();
+		if (S2 == 0) {
+			printf("SMOKER S2:%d\n", getpid());
+			smoke();
+			exit(0);
+		} else if (S2 < 0) {
+			//failed to fork
+		} else {
+			//agent
+			wait();
+			consume();
+
+			pid_t S3 = fork();
+			if (S3 == 0) {
+				printf("SMOKER S3:%d\n", getpid());
+				smoke();
+				exit(0);
+			} else if (S3 < 0) {
+				//failed to fork
+			}
+		}
+	}
+}
+
+int main()
 {
 	initializeSuplies();
 
@@ -116,5 +135,6 @@ void main()
 	forkSmokers();
 
 	printf("AGENT IS DONE!");
-	exit();
+	exit(0);
+	return 0;
 }
