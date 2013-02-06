@@ -112,9 +112,8 @@ void forkSmokers()
 		fflush(stdout);
 		exit(0);
 	} else if (S1 < 0) {
-		//failed to fork
+		perror("Failed to fork");
 	} else {
-		//agent
 		wait();
 		consume();
 
@@ -125,9 +124,8 @@ void forkSmokers()
 			fflush(stdout);
 			exit(0);
 		} else if (S2 < 0) {
-			//failed to fork
+			perror("Failed to fork");
 		} else {
-			//agent
 			wait();
 			consume();
 
@@ -138,7 +136,7 @@ void forkSmokers()
 				fflush(stdout);
 				exit(0);
 			} else if (S3 < 0) {
-				//failed to fork
+				perror("Failed to fork");
 			}
 		}
 	}
